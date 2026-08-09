@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#1e1e1e" />
+  <title>Obsidian Local</title>
+
+  <link rel="stylesheet" href="./style.css" />
+
+  <!-- Only third-party dependency: Markdown renderer -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+
+  <div id="selectionToolbar" class="selection-toolbar hidden">
+    <button id="selectionRedButton" class="selection-action red-action" type="button" title="Toggle red highlight">
+      A
+    </button>
+    <button id="selectionDeleteButton" class="selection-action delete-action" type="button" title="Delete selected cells">
+      🗑
+    </button>
+    <span id="selectionCount" class="selection-count">0 selected</span>
+  </div>
+
+  <header class="topbar">
+    <div class="brand">
+      <div class="obsidian-gem">◆</div>
+      <div class="brand-copy">
+        <strong>Obsidian Local</strong>
+        <span id="fileName">No file open</span>
+      </div>
+    </div>
+
+    <nav class="tabs" aria-label="Main views">
+      <button class="tab active" data-view="markdown" type="button">Obsidian</button>
+      <button class="tab keep-tab" data-view="keep" type="button">Keep</button>
+    </nav>
+
+    <div id="markdownActions" class="actions">
+      <span id="saveStatus" class="status">Open a file</span>
+      <button id="newBlockButton" class="btn" type="button">+ Block</button>
+      <button id="openButton" class="btn primary" type="button">Open .md</button>
+      <button id="saveButton" class="btn" type="button" disabled>Save</button>
+    </div>
+
+    <div id="keepActions" class="actions hidden">
+      <span id="keepStatus" class="status">Locked</span>
+      <button id="copyBackupButton" class="btn" type="button" disabled>Copy Base64</button>
+      <button id="lockKeepButton" class="btn" type="button" disabled>Lock</button>
+    </div>
+  </header>
+
+  <!-- OBSIDIAN VIEW -->
+  <main id="markdownView" class="page-shell">
+    <article id="document" class="document" aria-label="Markdown document"></article>
+    <button id="bottomAdd" class="bottom-add" type="button">+ Add block</button>
+  </main>
+
+  <!-- KEEP VIEW -->
+  <main id="keepView" class="keep-page hidden">
+
+    <section id="keepLocked" class="lock-card">
+      <div class="keep-bulb">💡</div>
+      <h1>Private Keep</h1>
+      <p>
+        These notes live only in this browser's localStorage.
+        Enter your password to reveal them.
+      </p>
+
+      <form id="unlockForm" class="unlock-form">
+        <input
+          id="keepPassword"
+          type="password"
+          autocomplete="off"
+          placeholder="Password"
+          required
+        />
+        <button type="submit" class="keep-primary">Unlock</button>
+      </form>
+
+      <p id="unlockMessage" class="small-message"></p>
+    </section>
+
+    <section id="keepUnlocked" class="keep-app hidden">
+      <div class="keep-compose">
+        <input
+          id="keepTitleInput"
+          type="text"
+          placeholder="Title"
+          maxlength="200"
+        />
+
+        <textarea
+          id="keepBodyInput"
+          placeholder="Take a note..."
+        ></textarea>
+
+        <div class="compose-footer">
+          <span id="keepEditState">New note</span>
+          <div class="compose-buttons">
+            <button id="cancelKeepEditButton" class="keep-text-button hidden" type="button">
+              Cancel
+            </button>
+            <button id="saveKeepNoteButton" class="keep-primary" type="button">
+              Save note
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div id="keepGrid" class="keep-grid"></div>
+
+      <section class="backup-info">
+        <strong>Local-only storage</strong>
+        <span>
+          Notes are stored as one Base64 string under
+          <code>obsidianLocalKeepNotes</code> in localStorage.
+        </span>
+      </section>
+    </section>
+
+  </main>
+
+  <div id="unsupported" class="notice hidden">
+    Direct autosave to local .md files needs the File System Access API.
+    Use desktop Chrome or Edge for the Obsidian tab.
+  </div>
+
+  <script src="./script.js"></script>
+</body>
+</html>
