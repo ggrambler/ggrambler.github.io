@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#1e1e1e">
+
+  <title>Books</title>
+
+  <link rel="stylesheet" href="./books.css">
+</head>
+
+<body>
+
+  <header class="topbar">
+
+    <a href="../" class="back-button">
+      ← Home
+    </a>
+
+    <div class="brand">
+      <span class="gem">◆</span>
+
+      <div>
+        <strong>Engineering Library</strong>
+        <span>Books & References</span>
+      </div>
+    </div>
+
+    <input
+      id="searchInput"
+      type="search"
+      placeholder="Search books..."
+    >
+
+  </header>
+
+
+  <main>
+
+    <section id="libraryView">
+
+      <div class="library-header">
+        <div>
+          <h1>Library</h1>
+          <p id="bookCount"></p>
+        </div>
+      </div>
+
+      <div id="bookGrid" class="book-grid"></div>
+
+    </section>
+
+
+    <!-- PDF READER -->
+
+    <section id="readerView" class="reader hidden">
+
+      <div class="reader-toolbar">
+
+        <button
+          id="closeReader"
+          class="toolbar-button"
+          type="button"
+        >
+          ← Library
+        </button>
+
+        <div class="reader-title">
+          <strong id="readerBookTitle"></strong>
+          <span id="readerBookAuthor"></span>
+        </div>
+
+        <a
+          id="downloadPdf"
+          class="toolbar-button"
+          href="#"
+          download
+        >
+          Download PDF
+        </a>
+
+      </div>
+
+
+      <iframe
+        id="pdfViewer"
+        class="pdf-viewer"
+        title="PDF Reader"
+      ></iframe>
+
+    </section>
+
+  </main>
+
+
+  <script src="./books.js"></script>
+
+</body>
+</html>
