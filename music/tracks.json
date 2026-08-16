@@ -1,0 +1,466 @@
+[
+  {
+    "id": "001",
+    "title": "IGOR'S THEME",
+    "artist": "Tyler, The Creator",
+    "album": "IGOR",
+    "file": "01 - IGOR'S THEME.flac",
+    "cover": ""
+  },
+  {
+    "id": "002",
+    "title": "Nikes",
+    "artist": "Frank Ocean",
+    "album": "Blonde",
+    "file": "01 Nikes.mp3",
+    "cover": ""
+  },
+  {
+    "id": "003",
+    "title": "Foreword",
+    "artist": "Tyler, The Creator",
+    "album": "Flower Boy",
+    "file": "01. Foreword.flac",
+    "cover": ""
+  },
+  {
+    "id": "004",
+    "title": "wacced out murals",
+    "artist": "Kendrick Lamar",
+    "album": "GNX",
+    "file": "01. wacced out murals.mp3",
+    "cover": ""
+  },
+  {
+    "id": "005",
+    "title": "EARFQUAKE",
+    "artist": "Tyler, The Creator",
+    "album": "IGOR",
+    "file": "02 - EARFQUAKE.flac",
+    "cover": ""
+  },
+  {
+    "id": "006",
+    "title": "No Reply",
+    "artist": "",
+    "album": "",
+    "file": "02 - No Reply.flac",
+    "cover": ""
+  },
+  {
+    "id": "007",
+    "title": "Ivy",
+    "artist": "Frank Ocean",
+    "album": "Blonde",
+    "file": "02 Ivy.mp3",
+    "cover": ""
+  },
+  {
+    "id": "008",
+    "title": "squabble up",
+    "artist": "Kendrick Lamar",
+    "album": "GNX",
+    "file": "02. squabble up.mp3",
+    "cover": ""
+  },
+  {
+    "id": "009",
+    "title": "Where This Flower Blooms",
+    "artist": "Tyler, The Creator",
+    "album": "Flower Boy",
+    "file": "02. Where This Flower Blooms.flac",
+    "cover": ""
+  },
+  {
+    "id": "010",
+    "title": "Dracula",
+    "artist": "",
+    "album": "",
+    "file": "03 - Dracula.flac",
+    "cover": ""
+  },
+  {
+    "id": "011",
+    "title": "I THINK",
+    "artist": "Tyler, The Creator",
+    "album": "IGOR",
+    "file": "03 - I THINK.flac",
+    "cover": ""
+  },
+  {
+    "id": "012",
+    "title": "Pink + White",
+    "artist": "Frank Ocean",
+    "album": "Blonde",
+    "file": "03 Pink + White.mp3",
+    "cover": ""
+  },
+  {
+    "id": "013",
+    "title": "luther",
+    "artist": "Kendrick Lamar",
+    "album": "GNX",
+    "file": "03. luther.mp3",
+    "cover": ""
+  },
+  {
+    "id": "014",
+    "title": "Sometimes...",
+    "artist": "Tyler, The Creator",
+    "album": "Flower Boy",
+    "file": "03. Sometimes....flac",
+    "cover": ""
+  },
+  {
+    "id": "015",
+    "title": "EXACTLY WHAT YOU RUN FROM YOU END UP CHASING",
+    "artist": "Tyler, The Creator",
+    "album": "IGOR",
+    "file": "04 - EXACTLY WHAT YOU RUN FROM YOU END UP CHASING.flac",
+    "cover": ""
+  },
+  {
+    "id": "016",
+    "title": "Be Yourself",
+    "artist": "Frank Ocean",
+    "album": "Blonde",
+    "file": "04 Be Yourself.mp3",
+    "cover": ""
+  },
+  {
+    "id": "017",
+    "title": "man at the garden",
+    "artist": "Kendrick Lamar",
+    "album": "GNX",
+    "file": "04. man at the garden.mp3",
+    "cover": ""
+  },
+  {
+    "id": "018",
+    "title": "See You Again",
+    "artist": "Tyler, The Creator",
+    "album": "Flower Boy",
+    "file": "04. See You Again.flac",
+    "cover": ""
+  },
+  {
+    "id": "019",
+    "title": "RUNNING OUT OF TIME",
+    "artist": "Tyler, The Creator",
+    "album": "IGOR",
+    "file": "05 - RUNNING OUT OF TIME.flac",
+    "cover": ""
+  },
+  {
+    "id": "020",
+    "title": "Solo",
+    "artist": "Frank Ocean",
+    "album": "Blonde",
+    "file": "05 Solo.mp3",
+    "cover": ""
+  },
+  {
+    "id": "021",
+    "title": "hey now",
+    "artist": "Kendrick Lamar",
+    "album": "GNX",
+    "file": "05. hey now.mp3",
+    "cover": ""
+  },
+  {
+    "id": "022",
+    "title": "Who Dat Boy",
+    "artist": "Tyler, The Creator",
+    "album": "Flower Boy",
+    "file": "05. Who Dat Boy.flac",
+    "cover": ""
+  },
+  {
+    "id": "023",
+    "title": "NEW MAGIC WAND",
+    "artist": "Tyler, The Creator",
+    "album": "IGOR",
+    "file": "06 - NEW MAGIC WAND.flac",
+    "cover": ""
+  },
+  {
+    "id": "024",
+    "title": "Not My World",
+    "artist": "",
+    "album": "",
+    "file": "06 - Not My World.flac",
+    "cover": ""
+  },
+  {
+    "id": "025",
+    "title": "Skyline To",
+    "artist": "Frank Ocean",
+    "album": "Blonde",
+    "file": "06 Skyline To.mp3",
+    "cover": ""
+  },
+  {
+    "id": "026",
+    "title": "Pothole",
+    "artist": "Tyler, The Creator",
+    "album": "Flower Boy",
+    "file": "06. Pothole.flac",
+    "cover": ""
+  },
+  {
+    "id": "027",
+    "title": "reincarnated",
+    "artist": "Kendrick Lamar",
+    "album": "GNX",
+    "file": "06. reincarnated.mp3",
+    "cover": ""
+  },
+  {
+    "id": "028",
+    "title": "A BOY IS A GUN*",
+    "artist": "Tyler, The Creator",
+    "album": "IGOR",
+    "file": "07 - A BOY IS A GUN.flac",
+    "cover": ""
+  },
+  {
+    "id": "029",
+    "title": "Self Control",
+    "artist": "Frank Ocean",
+    "album": "Blonde",
+    "file": "07 Self Control.mp3",
+    "cover": ""
+  },
+  {
+    "id": "030",
+    "title": "Garden Shed",
+    "artist": "Tyler, The Creator",
+    "album": "Flower Boy",
+    "file": "07. Garden Shed.flac",
+    "cover": ""
+  },
+  {
+    "id": "031",
+    "title": "tv off",
+    "artist": "Kendrick Lamar",
+    "album": "GNX",
+    "file": "07. tv off.mp3",
+    "cover": ""
+  },
+  {
+    "id": "032",
+    "title": "PUPPET",
+    "artist": "Tyler, The Creator",
+    "album": "IGOR",
+    "file": "08 - PUPPET.flac",
+    "cover": ""
+  },
+  {
+    "id": "033",
+    "title": "Good Guy",
+    "artist": "Frank Ocean",
+    "album": "Blonde",
+    "file": "08 Good Guy.mp3",
+    "cover": ""
+  },
+  {
+    "id": "034",
+    "title": "dodger blue",
+    "artist": "Kendrick Lamar",
+    "album": "GNX",
+    "file": "08. dodger blue.mp3",
+    "cover": ""
+  },
+  {
+    "id": "035",
+    "title": "Reminiscing",
+    "artist": "",
+    "album": "",
+    "file": "09 - Reminiscing.mp3",
+    "cover": ""
+  },
+  {
+    "id": "036",
+    "title": "WHAT'S GOOD",
+    "artist": "Tyler, The Creator",
+    "album": "IGOR",
+    "file": "09 - WHAT'S GOOD.flac",
+    "cover": ""
+  },
+  {
+    "id": "037",
+    "title": "Nights",
+    "artist": "Frank Ocean",
+    "album": "Blonde",
+    "file": "09 Nights.mp3",
+    "cover": ""
+  },
+  {
+    "id": "038",
+    "title": "I Ain't Got Time!",
+    "artist": "Tyler, The Creator",
+    "album": "Flower Boy",
+    "file": "09. I Ain't Got Time!.flac",
+    "cover": ""
+  },
+  {
+    "id": "039",
+    "title": "peekaboo",
+    "artist": "Kendrick Lamar",
+    "album": "GNX",
+    "file": "09. peekaboo.mp3",
+    "cover": ""
+  },
+  {
+    "id": "040",
+    "title": "Self Aware",
+    "artist": "Temper City",
+    "album": "",
+    "file": "1. Temper City - Self Aware.flac",
+    "cover": ""
+  },
+  {
+    "id": "041",
+    "title": "See You On Monday (You're Lost)",
+    "artist": "",
+    "album": "",
+    "file": "10 - See You On Monday (You're Lost).flac",
+    "cover": ""
+  },
+  {
+    "id": "042",
+    "title": "Solo (Reprise)",
+    "artist": "Frank Ocean",
+    "album": "Blonde",
+    "file": "10 Solo (Reprise).mp3",
+    "cover": ""
+  },
+  {
+    "id": "043",
+    "title": "heart pt. 6",
+    "artist": "Kendrick Lamar",
+    "album": "GNX",
+    "file": "10. heart pt. 6.mp3",
+    "cover": ""
+  },
+  {
+    "id": "044",
+    "title": "Afterthought",
+    "artist": "",
+    "album": "",
+    "file": "11 - Afterthought.flac",
+    "cover": ""
+  },
+  {
+    "id": "045",
+    "title": "I DON'T LOVE YOU ANYMORE",
+    "artist": "Tyler, The Creator",
+    "album": "IGOR",
+    "file": "11 - I DON'T LOVE YOU ANYMORE.flac",
+    "cover": ""
+  },
+  {
+    "id": "046",
+    "title": "Pretty Sweet",
+    "artist": "Frank Ocean",
+    "album": "Blonde",
+    "file": "11 Pretty Sweet.mp3",
+    "cover": ""
+  },
+  {
+    "id": "047",
+    "title": "Droppin' Seeds",
+    "artist": "Tyler, The Creator",
+    "album": "Flower Boy",
+    "file": "11. Droppin' Seeds.flac",
+    "cover": ""
+  },
+  {
+    "id": "048",
+    "title": "gnx",
+    "artist": "Kendrick Lamar",
+    "album": "GNX",
+    "file": "11. gnx.mp3",
+    "cover": ""
+  },
+  {
+    "id": "049",
+    "title": "Facebook Story",
+    "artist": "Frank Ocean",
+    "album": "Blonde",
+    "file": "12 Facebook Story.mp3",
+    "cover": ""
+  },
+  {
+    "id": "050",
+    "title": "gloria",
+    "artist": "Kendrick Lamar",
+    "album": "GNX",
+    "file": "12. gloria.mp3",
+    "cover": ""
+  },
+  {
+    "id": "051",
+    "title": "November",
+    "artist": "Tyler, The Creator",
+    "album": "Flower Boy",
+    "file": "12. November.flac",
+    "cover": ""
+  },
+  {
+    "id": "052",
+    "title": "Close to You",
+    "artist": "Frank Ocean",
+    "album": "Blonde",
+    "file": "13 Close to You.mp3",
+    "cover": ""
+  },
+  {
+    "id": "053",
+    "title": "Glitter",
+    "artist": "Tyler, The Creator",
+    "album": "Flower Boy",
+    "file": "13. Glitter.flac",
+    "cover": ""
+  },
+  {
+    "id": "054",
+    "title": "White Ferrari",
+    "artist": "Frank Ocean",
+    "album": "Blonde",
+    "file": "14 White Ferrari.mp3",
+    "cover": ""
+  },
+  {
+    "id": "055",
+    "title": "Enjoy Right Now, Today",
+    "artist": "Tyler, The Creator",
+    "album": "Flower Boy",
+    "file": "14. Enjoy Right Now, Today.flac",
+    "cover": ""
+  },
+  {
+    "id": "056",
+    "title": "Seigfried",
+    "artist": "Frank Ocean",
+    "album": "Blonde",
+    "file": "15 Seigfried.mp3",
+    "cover": ""
+  },
+  {
+    "id": "057",
+    "title": "Godspeed",
+    "artist": "Frank Ocean",
+    "album": "Blonde",
+    "file": "16 Godspeed.mp3",
+    "cover": ""
+  },
+  {
+    "id": "058",
+    "title": "Futura Free",
+    "artist": "Frank Ocean",
+    "album": "Blonde",
+    "file": "17 Futura Free.mp3",
+    "cover": ""
+  }
+]
