@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Files</title>
+
+  <style>
+    body {
+      font-family: monospace;
+      background: #111;
+      color: #eee;
+      padding: 40px;
+    }
+
+    #file-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .file-link {
+      color: #aaa;
+      text-decoration: none;
+      font-size: 18px;
+      width: fit-content;
+    }
+
+    .file-link:hover {
+      color: white;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>/files</h1>
+
+  <div id="file-list">Loading...</div>
+
+  <script src="./files.js"></script>
+
+</body>
+</html>

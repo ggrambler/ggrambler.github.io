@@ -1,106 +1,81 @@
-# Obsidian Local
+# Obsidian Local — Strict Render/Edit Edition
 
-Static GitHub Pages Markdown editor + local-only Keep-style private notes.
+## Cell state model
 
-## What goes where
-
-### Obsidian tab
-
-- Opens a local `.md` file
-- Renders Markdown as one continuous reading view
-- Click a Markdown block to edit only that block
-- Autosaves directly back to the selected `.md` file
-- Checklist mode automatically continues `- [ ]` when Enter is pressed
-
-### Keep tab
-
-- Never sends notes to GitHub
-- Never uses an API
-- Never uses a cookie or token
-- Stores one Base64 string in browser `localStorage`
-- Requires the configured password before the UI reveals notes
-- Password check is `btoa(input) === configured Base64`
-- "Copy Base64" gives you the exact stored payload for manual recovery
-
-Current password:
+A Markdown cell has exactly two content states:
 
 ```text
-ILOVERAMEN
+Render mode
+Edit mode
 ```
 
-Its configured Base64 form is:
+Default is **Render mode**.
+
+There is no separate "selected view". Selection is only a visual outline overlay on rendered cells.
+
+## Click outside
+
+When a cell is being edited:
 
 ```text
-SUxPVkVSQU1FTg==
+click anywhere outside that cell
+→ commit its Markdown
+→ return it to Render mode
 ```
 
-## Keep localStorage key
+If the edited cell is empty:
 
 ```text
-obsidianLocalKeepNotes
+click outside
+→ cell is deleted automatically
 ```
 
-The value is Base64-encoded UTF-8 JSON.
+`Esc` does the same commit/render behavior.
 
-You can inspect it in browser DevTools:
+## Selection controls
+
+Every cell now has only ONE per-cell button:
 
 ```text
-Application
-→ Local Storage
-→ your GitHub Pages origin
-→ obsidianLocalKeepNotes
+[□]
 ```
 
-Or run:
+That button selects/unselects the cell.
 
-```js
-localStorage.getItem("obsidianLocalKeepNotes")
-```
+You can also drag across cells to multi-select a contiguous range.
 
-## Important
+## Floating selection toolbar
 
-Base64 is encoding, not cryptographic encryption.
-
-Anyone who has access to the browser's stored value can decode it. This project intentionally uses Base64 because the desired design prioritizes simple manual recovery.
-
-## Persistence
-
-`localStorage` normally survives:
-
-- refreshes
-- closing/reopening the browser
-- computer restarts
-
-It can still disappear if browser/site data is cleared, the browser profile is deleted, or storage is otherwise reset.
-
-Use **Copy Base64** periodically if the notes matter.
-
-## Deploy to GitHub Pages
-
-Put these files in your Pages repository root:
+Whenever one or more cells are selected, a floating toolbar appears on the LEFT side:
 
 ```text
-index.html
-style.css
-script.js
-README.md
+[A]
+[🗑]
 ```
 
-For a user GitHub Pages site, name the repo:
+- `A` → toggle red highlight for all selected cells
+- `🗑` → delete all selected cells
 
-```text
-YOUR_USERNAME.github.io
-```
+Pressing `Delete` / `Backspace` still deletes the current selected set.
 
-Then:
+## Existing shortcuts
 
-```text
-Repository
-→ Settings
-→ Pages
-→ Deploy from a branch
-→ main
-→ / (root)
-```
+### Obsidian
 
-No build step is required.
+- `b` → new cell
+- `i` → edit selected cell
+- `Tab` → next cell
+- `Shift + Tab` → previous cell
+- `Esc` → render active cell / clear multi-selection
+- `Delete` / `Backspace` → delete selected cells
+- `/check` + Enter → 10 separate checklist cells
+- Enter inside checklist cell → new checklist cell below
+- `Ctrl/Cmd + S` → save
+- `Ctrl/Cmd + O` → open file
+
+### Keep
+
+- `b` → new Keep note
+- `Ctrl/Cmd + Enter` → save Keep note
+
+Keep remains localStorage + Base64 only.

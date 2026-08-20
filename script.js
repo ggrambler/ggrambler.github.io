@@ -4,10 +4,7 @@
 
 // Base64("ILOVERAMEN")
 const KEEP_PASSWORD_BASE64 = "SUxPVkVSQU1FTg==";
-
-// Everything in Keep is stored ONLY in this browser key.
 const KEEP_STORAGE_KEY = "obsidianLocalKeepNotes";
-
 const AUTOSAVE_DELAY = 700;
 
 // ============================================================
@@ -45,13 +42,25 @@ const saveKeepNoteButton = document.getElementById("saveKeepNoteButton");
 const cancelKeepEditButton = document.getElementById("cancelKeepEditButton");
 const keepGrid = document.getElementById("keepGrid");
 
+const selectionToolbar = document.getElementById("selectionToolbar");
+const selectionRedButton = document.getElementById("selectionRedButton");
+const selectionDeleteButton = document.getElementById("selectionDeleteButton");
+const selectionCount = document.getElementById("selectionCount");
+
 // ============================================================
-// APP STATE
+// STATE
 // ============================================================
 
 let fileHandle = null;
 let blocks = [];
 let activeIndex = null;
+let selectedIndex = 0;
+
+let multiSelected = new Set();
+let dragSelecting = false;
+let dragAnchorIndex = null;
+let dragLastIndex = null;
+let justDraggedSelection = false;
 
 let autosaveTimer = null;
 let saveInProgress = false;
@@ -63,18 +72,21 @@ let editingKeepId = null;
 
 const starterMarkdown = `# Obsidian Local
 
-Click any block to edit it. Click away to return to reading mode.
+Keyboard-first Markdown editing:
 
-## Checklist mode
+- **Tab** → move between cells
+- **i** → edit selected cell
+- **b** → create a new cell
+- **Esc** → render active cell
+- Type **/check** and press Enter → generate 10 checklist cells
 
-Start a checklist:
+## Checklist behavior
+
+Each checklist item is its own cell.
 
 - [ ] Buy coffee
-- [ ] Learn JavaScript
 
-When your cursor is on a checklist line, pressing **Enter** automatically creates another \`- [ ]\` item.
-
-> Your Markdown file stays on your computer and autosaves directly to that file.
+Press Enter while editing that checklist cell and a new checklist cell appears directly below it.
 `;
 
 marked.setOptions({
@@ -85,6 +97,14 @@ marked.setOptions({
 // ============================================================
 // VIEW SWITCHING
 // ============================================================
+
+function isMarkdownVisible() {
+  return !markdownView.classList.contains("hidden");
+}
+
+function isKeepVisible() {
+  return !keepView.classList.contains("hidden");
+}
 
 tabs.forEach(tab => {
   tab.addEventListener("click", () => {
@@ -97,9 +117,13 @@ tabs.forEach(tab => {
 
     markdownView.classList.toggle("hidden", !isMarkdown);
     keepView.classList.toggle("hidden", isMarkdown);
-
     markdownActions.classList.toggle("hidden", !isMarkdown);
     keepActions.classList.toggle("hidden", isMarkdown);
+
+    if (isMarkdown) {
+      ensureValidSelection();
+      paintSelection();
+    }
   });
 });
 
@@ -112,26 +136,236 @@ function setSaveStatus(text, state = "") {
   saveStatus.className = `status ${state}`;
 }
 
+// IMPORTANT:
+// marked.lexer() normally groups consecutive Markdown list items into one token.
+// We split task-list tokens further so EVERY checklist item becomes its own app cell.
 function parseBlocks(markdown) {
   const tokens = marked.lexer(markdown);
+  const parsed = [];
 
-  const parsed = tokens
-    .filter(token => token.type !== "space")
-    .map(token => ({
-      source: (token.raw || "").trimEnd()
-    }))
-    .filter(block => block.source.trim().length > 0);
+  for (const token of tokens) {
+    if (token.type === "space") continue;
+
+    const raw = (token.raw || "").trimEnd();
+    if (!raw.trim()) continue;
+
+    if (token.type === "list") {
+      const lines = raw.split("\n");
+      const taskLines = lines.filter(line =>
+        /^\s*-\s+\[[ xX]\]\s*/.test(line)
+      );
+
+      // If the whole token is a flat checklist, split every item into its own cell.
+      if (
+        taskLines.length > 0 &&
+        lines.filter(line => line.trim()).every(line =>
+          /^\s*-\s+\[[ xX]\]\s*/.test(line)
+        )
+      ) {
+        for (const line of lines) {
+          if (line.trim()) {
+            parsed.push({ source: line.trimEnd() });
+          }
+        }
+        continue;
+      }
+    }
+
+    parsed.push({ source: raw });
+  }
 
   return parsed.length ? parsed : [{ source: "" }];
 }
 
 function rebuildMarkdown() {
-  return (
-    blocks
-      .map(block => block.source.trimEnd())
-      .join("\n\n")
-      .trimEnd() + "\n"
+  return blocks
+    .map(block => block.source.trimEnd())
+    .join("\n\n")
+    .trimEnd() + "\n";
+}
+
+
+function unwrapRedSource(source) {
+  const trimmed = source.trim();
+
+  const match = trimmed.match(
+    /^<span class="red-highlight">([\s\S]*)<\/span>$/
   );
+
+  return match ? match[1] : source;
+}
+
+function parseChecklistCell(source) {
+  const sourceForCheck = unwrapRedSource(source);
+  const match = sourceForCheck.match(/^(\s*)-\s+\[([ xX])\]\s*(.*)$/s);
+
+  if (!match) return null;
+
+  return {
+    indentation: match[1],
+    checked: match[2].toLowerCase() === "x",
+    text: match[3] || ""
+  };
+}
+
+function isChecklistCell(source) {
+  return parseChecklistCell(source) !== null;
+}
+
+function renderChecklistCell(cell, block, blockIndex) {
+  const parsed = parseChecklistCell(block.source);
+  if (!parsed) return;
+
+  cell.classList.add("checklist-cell");
+
+  const row = document.createElement("div");
+  row.className = `check-row ${parsed.checked ? "done" : ""}`;
+
+  const marker = document.createElement("span");
+  marker.className = "check-marker";
+  marker.textContent = parsed.checked ? "- [x]" : "- [ ]";
+
+  const text = document.createElement("div");
+  text.className = "check-block-text";
+
+  if (parsed.text.trim()) {
+    text.innerHTML = marked.parseInline(parsed.text);
+  } else {
+    text.innerHTML = '<span class="check-empty">Checklist item</span>';
+  }
+
+  const toggle = document.createElement("button");
+  toggle.className = `check-toggle ${parsed.checked ? "checked" : ""}`;
+  toggle.type = "button";
+  toggle.setAttribute(
+    "aria-label",
+    parsed.checked ? "Mark incomplete" : "Mark complete"
+  );
+  toggle.title = parsed.checked ? "Mark incomplete" : "Mark complete";
+  toggle.textContent = parsed.checked ? "✓" : "";
+
+  toggle.addEventListener("click", event => {
+    event.stopPropagation();
+    toggleChecklistItem(blockIndex);
+  });
+
+  row.appendChild(marker);
+  row.appendChild(text);
+  row.appendChild(toggle);
+  cell.appendChild(row);
+}
+
+function toggleChecklistItem(blockIndex) {
+  const parsed = parseChecklistCell(blocks[blockIndex].source);
+  if (!parsed) return;
+
+  blocks[blockIndex].source =
+    `${parsed.indentation}- [${parsed.checked ? " " : "x"}] ${parsed.text}`;
+
+  selectedIndex = blockIndex;
+  renderAllBlocks();
+  queueAutosave();
+}
+
+
+function isCellRed(block) {
+  return /^<span class="red-highlight">[\s\S]*<\/span>$/.test(block.source.trim());
+}
+
+function toggleCellRed(index) {
+  const source = blocks[index].source.trim();
+
+  if (isCellRed(blocks[index])) {
+    blocks[index].source = source
+      .replace(/^<span class="red-highlight">/, "")
+      .replace(/<\/span>$/, "");
+  } else {
+    blocks[index].source = `<span class="red-highlight">${source}</span>`;
+  }
+
+  selectedIndex = index;
+  renderAllBlocks();
+  paintSelection();
+  queueAutosave();
+}
+
+function deleteCells(indices) {
+  const unique = [...new Set(indices)]
+    .filter(index => index >= 0 && index < blocks.length)
+    .sort((a, b) => b - a);
+
+  if (!unique.length) return;
+
+  for (const index of unique) {
+    blocks.splice(index, 1);
+  }
+
+  if (!blocks.length) {
+    blocks = [{ source: "" }];
+  }
+
+  activeIndex = null;
+  multiSelected.clear();
+
+  selectedIndex = Math.min(
+    unique[unique.length - 1],
+    blocks.length - 1
+  );
+
+  renderAllBlocks();
+  queueAutosave();
+}
+
+function setMultiSelected(index, force = null) {
+  if (force === true) {
+    multiSelected.add(index);
+  } else if (force === false) {
+    multiSelected.delete(index);
+  } else if (multiSelected.has(index)) {
+    multiSelected.delete(index);
+  } else {
+    multiSelected.add(index);
+  }
+
+  paintSelection();
+}
+
+function clearMultiSelection() {
+  multiSelected.clear();
+  paintSelection();
+}
+
+function applyDragSelection(anchorIndex, currentIndex) {
+  multiSelected.clear();
+
+  const start = Math.min(anchorIndex, currentIndex);
+  const end = Math.max(anchorIndex, currentIndex);
+
+  for (let i = start; i <= end; i++) {
+    multiSelected.add(i);
+  }
+
+  paintSelection();
+}
+
+function makeCellToolbar(index) {
+  const tools = document.createElement("div");
+  tools.className = "cell-tools";
+
+  const select = document.createElement("button");
+  select.className = `cell-tool select-tool ${multiSelected.has(index) ? "active" : ""}`;
+  select.type = "button";
+  select.title = "Select cell";
+  select.setAttribute("aria-label", "Select cell");
+  select.textContent = "□";
+
+  select.addEventListener("click", event => {
+    event.stopPropagation();
+    setMultiSelected(index);
+  });
+
+  tools.appendChild(select);
+  return tools;
 }
 
 function renderAllBlocks() {
@@ -141,30 +375,144 @@ function renderAllBlocks() {
     const cell = document.createElement("section");
     cell.className = "md-cell reading";
     cell.dataset.index = index;
+    cell.tabIndex = -1;
 
-    if (block.source.trim()) {
-      cell.innerHTML = marked.parse(block.source);
-    } else {
+    cell.appendChild(makeCellToolbar(index));
+
+    const content = document.createElement("div");
+    content.className = "cell-content";
+
+    if (!block.source.trim()) {
       const empty = document.createElement("div");
       empty.className = "empty-block";
       empty.textContent = "Click to write…";
-      cell.appendChild(empty);
+      content.appendChild(empty);
+    } else if (isChecklistCell(block.source)) {
+      renderChecklistCell(content, block, index);
+    } else {
+      content.innerHTML = marked.parse(unwrapRedSource(block.source));
     }
+
+    if (isCellRed(block)) {
+      content.classList.add("red-highlight");
+    }
+
+    cell.appendChild(content);
 
     cell.addEventListener("click", event => {
       const link = event.target.closest("a");
+      const checklistButton = event.target.closest(".check-toggle");
+      const toolButton = event.target.closest(".cell-tool");
 
-      // Normal click follows rendered links.
-      // Alt+click edits the cell containing a link.
+      if (checklistButton || toolButton) return;
+
+      if (justDraggedSelection) {
+        justDraggedSelection = false;
+        return;
+      }
+
       if (link && !event.altKey) {
         event.stopPropagation();
         return;
       }
 
+      if (multiSelected.size > 0) {
+        clearMultiSelection();
+      }
+
+      selectedIndex = index;
+      paintSelection();
       enterEditMode(index);
     });
 
+    cell.addEventListener("mousedown", event => {
+      if (event.button !== 0) return;
+      if (event.target.closest(".cell-tool, .check-toggle, a, textarea, input, button")) return;
+
+      dragSelecting = true;
+      dragAnchorIndex = index;
+      dragLastIndex = index;
+      justDraggedSelection = false;
+
+      document.body.classList.add("cell-drag-selecting");
+
+      multiSelected.clear();
+      multiSelected.add(index);
+      paintSelection();
+
+      event.preventDefault();
+    });
+
+    cell.addEventListener("mouseenter", () => {
+      if (!dragSelecting || dragAnchorIndex === null) return;
+      if (dragLastIndex === index) return;
+
+      dragLastIndex = index;
+      justDraggedSelection = true;
+      applyDragSelection(dragAnchorIndex, index);
+    });
+
     documentEl.appendChild(cell);
+  });
+
+  ensureValidSelection();
+  paintSelection();
+}
+
+function ensureValidSelection() {
+  if (!blocks.length) {
+    selectedIndex = 0;
+    return;
+  }
+
+  selectedIndex = Math.max(
+    0,
+    Math.min(selectedIndex, blocks.length - 1)
+  );
+}
+
+function paintSelection() {
+  documentEl.querySelectorAll(".md-cell").forEach((cell, index) => {
+    cell.classList.toggle(
+      "keyboard-selected",
+      activeIndex === null &&
+      index === selectedIndex &&
+      !multiSelected.has(index)
+    );
+
+    cell.classList.toggle(
+      "multi-selected",
+      multiSelected.has(index)
+    );
+  });
+
+  const count = multiSelected.size;
+
+  selectionToolbar.classList.toggle("hidden", count === 0);
+  selectionCount.textContent = `${count} selected`;
+}
+
+function moveSelection(direction) {
+  if (!blocks.length) return;
+
+  multiSelected.clear();
+
+  if (activeIndex !== null) {
+    commitActiveCell();
+  }
+
+  selectedIndex =
+    (selectedIndex + direction + blocks.length) % blocks.length;
+
+  paintSelection();
+
+  const cell = documentEl.querySelector(
+    `[data-index="${selectedIndex}"]`
+  );
+
+  cell?.scrollIntoView({
+    behavior: "smooth",
+    block: "center"
   });
 }
 
@@ -173,70 +521,71 @@ function autoResize(textarea) {
   textarea.style.height = `${Math.max(textarea.scrollHeight, 54)}px`;
 }
 
-function getCurrentLine(textarea) {
-  const cursor = textarea.selectionStart;
-  const beforeCursor = textarea.value.slice(0, cursor);
+function replaceCurrentCellWithChecklistTemplate(index) {
+  const checklistCells = Array.from(
+    { length: 10 },
+    () => ({ source: "- [ ] " })
+  );
 
-  const lineStart = beforeCursor.lastIndexOf("\n") + 1;
-  const currentLine = beforeCursor.slice(lineStart);
+  blocks.splice(index, 1, ...checklistCells);
 
-  return { cursor, lineStart, currentLine };
+  activeIndex = null;
+  selectedIndex = index;
+
+  renderAllBlocks();
+  queueAutosave();
+
+  requestAnimationFrame(() => {
+    documentEl
+      .querySelector(`[data-index="${selectedIndex}"]`)
+      ?.scrollIntoView({ behavior: "smooth", block: "center" });
+  });
 }
 
-function handleChecklistEnter(event, textarea) {
-  if (event.key !== "Enter") return false;
+function createChecklistCellAfter(index) {
+  // Save current text first.
+  const textarea = documentEl.querySelector(
+    `[data-index="${index}"] .cell-editor`
+  );
 
-  const { currentLine } = getCurrentLine(textarea);
+  if (textarea) {
+    const wasRed = isCellRed(blocks[index]);
+    const value = textarea.value.trimEnd();
 
-  // Examples matched:
-  // - [ ] item
-  // - [x] done
-  //   - [ ] nested item
-  const match = currentLine.match(/^(\s*)-\s+\[[ xX]\]\s*(.*)$/);
-
-  if (!match) return false;
-
-  event.preventDefault();
-
-  const indentation = match[1];
-  const content = match[2];
-
-  const start = textarea.selectionStart;
-  const end = textarea.selectionEnd;
-
-  // If current checklist item is empty, Enter exits checklist mode.
-  if (content.trim() === "") {
-    const before = textarea.value.slice(0, start);
-    const after = textarea.value.slice(end);
-
-    const lineStart = before.lastIndexOf("\n") + 1;
-
-    textarea.value =
-      before.slice(0, lineStart) +
-      "\n" +
-      after;
-
-    textarea.selectionStart = textarea.selectionEnd = lineStart + 1;
-    textarea.dispatchEvent(new Event("input", { bubbles: true }));
-
-    return true;
+    blocks[index].source = wasRed
+      ? `<span class="red-highlight">${value}</span>`
+      : value;
   }
 
-  const insert = `\n${indentation}- [ ] `;
+  // New checklist cell immediately after current cell.
+  blocks.splice(index + 1, 0, { source: "- [ ] " });
 
-  textarea.setRangeText(insert, start, end, "end");
-  textarea.dispatchEvent(new Event("input", { bubbles: true }));
+  activeIndex = null;
+  selectedIndex = index + 1;
 
-  return true;
+  renderAllBlocks();
+
+  // Immediately enter the new checklist cell.
+  enterEditMode(index + 1);
+  queueAutosave();
+
+  requestAnimationFrame(() => {
+    documentEl
+      .querySelector(`[data-index="${index + 1}"]`)
+      ?.scrollIntoView({ behavior: "smooth", block: "center" });
+  });
 }
 
 function enterEditMode(index) {
   if (activeIndex === index) return;
 
+  multiSelected.clear();
+
   if (activeIndex !== null) {
     commitActiveCell();
   }
 
+  selectedIndex = index;
   activeIndex = index;
 
   const cell = documentEl.querySelector(`[data-index="${index}"]`);
@@ -247,18 +596,17 @@ function enterEditMode(index) {
 
   const textarea = document.createElement("textarea");
   textarea.className = "cell-editor";
-  textarea.value = blocks[index].source;
+  textarea.value = unwrapRedSource(blocks[index].source);
   textarea.spellcheck = true;
 
   const hint = document.createElement("div");
   hint.className = "cell-hint";
-  hint.textContent = "Checklist Enter → new task · Ctrl+Enter → render";
+  hint.textContent = "/check + Enter → 10 checklist cells · Esc → render";
 
   cell.appendChild(textarea);
   cell.appendChild(hint);
 
   autoResize(textarea);
-
   textarea.focus();
 
   const end = textarea.value.length;
@@ -271,28 +619,39 @@ function enterEditMode(index) {
   });
 
   textarea.addEventListener("keydown", event => {
-    if (handleChecklistEnter(event, textarea)) {
-      return;
-    }
+    if (event.key === "Enter") {
+      const current = textarea.value.trim();
 
-    if ((event.ctrlKey || event.metaKey) && event.key === "Enter") {
-      event.preventDefault();
-      commitActiveCell();
-      return;
+      // /check → replace this one cell with TEN checklist cells.
+      if (current === "/check") {
+        event.preventDefault();
+        replaceCurrentCellWithChecklistTemplate(index);
+        return;
+      }
+
+      // If THIS cell is a checklist item, Enter always creates a NEW checklist cell.
+      if (isChecklistCell(textarea.value.trimEnd())) {
+        event.preventDefault();
+        createChecklistCellAfter(index);
+        return;
+      }
     }
 
     if (event.key === "Escape") {
       event.preventDefault();
       commitActiveCell();
+      return;
     }
-  });
 
-  textarea.addEventListener("blur", () => {
-    setTimeout(() => {
-      if (activeIndex === index && document.activeElement !== textarea) {
-        commitActiveCell();
-      }
-    }, 0);
+    if (event.key === "Tab") {
+      event.preventDefault();
+
+      const direction = event.shiftKey ? -1 : 1;
+
+      commitActiveCell();
+      moveSelection(direction);
+      return;
+    }
   });
 }
 
@@ -306,14 +665,37 @@ function commitActiveCell() {
   );
 
   if (textarea) {
-    blocks[index].source = textarea.value;
+    const wasRed = isCellRed(blocks[index]);
+    const value = textarea.value;
+
+    blocks[index].source = wasRed
+      ? `<span class="red-highlight">${value}</span>`
+      : value;
   }
+
+  const raw = unwrapRedSource(blocks[index].source).trim();
 
   activeIndex = null;
 
-  // Re-lex the entire document so new headings, lists, paragraphs,
-  // code blocks, etc. automatically become their own cells.
+  // Empty edited cell disappears automatically on commit.
+  if (!raw) {
+    blocks.splice(index, 1);
+
+    if (!blocks.length) {
+      blocks = [{ source: "" }];
+    }
+
+    selectedIndex = Math.min(index, blocks.length - 1);
+
+    renderAllBlocks();
+    queueAutosave();
+    return;
+  }
+
+  // Reparse to preserve general Markdown semantics,
+  // while parseBlocks() keeps one checklist item per cell.
   blocks = parseBlocks(rebuildMarkdown());
+  selectedIndex = Math.min(index, blocks.length - 1);
 
   renderAllBlocks();
   queueAutosave();
@@ -324,15 +706,18 @@ function appendBlock() {
     commitActiveCell();
   }
 
-  blocks.push({ source: "" });
-  renderAllBlocks();
+  const insertAt = Math.min(selectedIndex + 1, blocks.length);
 
-  const index = blocks.length - 1;
-  enterEditMode(index);
+  blocks.splice(insertAt, 0, { source: "" });
+
+  selectedIndex = insertAt;
+
+  renderAllBlocks();
+  enterEditMode(insertAt);
 
   requestAnimationFrame(() => {
     documentEl
-      .querySelector(`[data-index="${index}"]`)
+      .querySelector(`[data-index="${insertAt}"]`)
       ?.scrollIntoView({ behavior: "smooth", block: "center" });
   });
 }
@@ -367,6 +752,7 @@ async function openMarkdownFile() {
     fileHandle = handle;
     blocks = parseBlocks(text);
     activeIndex = null;
+    selectedIndex = 0;
 
     fileName.textContent = file.name;
     document.title = `${file.name} — Obsidian Local`;
@@ -395,7 +781,12 @@ async function saveMarkdownFile() {
     );
 
     if (textarea) {
-      blocks[activeIndex].source = textarea.value;
+      const wasRed = isCellRed(blocks[activeIndex]);
+      const value = textarea.value;
+
+      blocks[activeIndex].source = wasRed
+        ? `<span class="red-highlight">${value}</span>`
+        : value;
     }
   }
 
@@ -451,12 +842,8 @@ bottomAdd.addEventListener("click", appendBlock);
 // KEEP: UTF-8 SAFE BASE64
 // ============================================================
 
-// btoa() by itself is unreliable for arbitrary Unicode.
-// These helpers keep Hindi, emoji, symbols, etc. readable after decoding.
-
 function utf8ToBase64(text) {
   const bytes = new TextEncoder().encode(text);
-
   let binary = "";
 
   bytes.forEach(byte => {
@@ -468,7 +855,6 @@ function utf8ToBase64(text) {
 
 function base64ToUtf8(base64) {
   const binary = atob(base64);
-
   const bytes = Uint8Array.from(
     binary,
     char => char.charCodeAt(0)
@@ -485,9 +871,7 @@ function decodeKeepNotes(encoded) {
   if (!encoded) return [];
 
   try {
-    const json = base64ToUtf8(encoded);
-    const parsed = JSON.parse(json);
-
+    const parsed = JSON.parse(base64ToUtf8(encoded));
     return Array.isArray(parsed) ? parsed : [];
   } catch (error) {
     console.error("Could not decode Keep notes:", error);
@@ -496,14 +880,16 @@ function decodeKeepNotes(encoded) {
 }
 
 function loadKeepNotesFromLocalStorage() {
-  const encoded = localStorage.getItem(KEEP_STORAGE_KEY);
-  return decodeKeepNotes(encoded);
+  return decodeKeepNotes(
+    localStorage.getItem(KEEP_STORAGE_KEY)
+  );
 }
 
 function saveKeepNotesToLocalStorage() {
-  const encoded = encodeKeepNotes(keepNotes);
-
-  localStorage.setItem(KEEP_STORAGE_KEY, encoded);
+  localStorage.setItem(
+    KEEP_STORAGE_KEY,
+    encodeKeepNotes(keepNotes)
+  );
 
   keepStatus.textContent = "Saved locally ✓";
   keepStatus.className = "status saved";
@@ -540,8 +926,6 @@ function unlockKeep() {
 
 function lockKeep() {
   keepUnlockedState = false;
-
-  // Drop the readable data from our JS state.
   keepNotes = [];
   editingKeepId = null;
 
@@ -569,7 +953,6 @@ unlockForm.addEventListener("submit", event => {
 
   unlockMessage.textContent = "";
   keepPassword.value = "";
-
   unlockKeep();
 });
 
@@ -580,9 +963,7 @@ lockKeepButton.addEventListener("click", lockKeep);
 // ============================================================
 
 function makeId() {
-  if (crypto.randomUUID) {
-    return crypto.randomUUID();
-  }
+  if (crypto.randomUUID) return crypto.randomUUID();
 
   return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
 }
@@ -596,23 +977,30 @@ function clearKeepComposer() {
   saveKeepNoteButton.textContent = "Save note";
 }
 
+function focusNewKeepNote() {
+  if (!keepUnlockedState) return;
+
+  clearKeepComposer();
+  keepTitleInput.focus();
+}
+
 function renderKeepNotes() {
   keepGrid.innerHTML = "";
 
   if (!keepNotes.length) {
     const empty = document.createElement("div");
     empty.className = "empty-keep";
+
     empty.innerHTML = `
       <div style="font-size:42px;margin-bottom:12px">💡</div>
       <strong>No private notes yet</strong>
-      <p>Create one above. It will be Base64-encoded and stored only in localStorage.</p>
+      <p>Press <b>b</b> to start a new note.</p>
     `;
 
     keepGrid.appendChild(empty);
     return;
   }
 
-  // Latest updated notes first.
   const sorted = [...keepNotes].sort(
     (a, b) => (b.updatedAt || "").localeCompare(a.updatedAt || "")
   );
@@ -638,7 +1026,8 @@ function renderKeepNotes() {
     date.className = "keep-note-date";
 
     if (note.updatedAt) {
-      date.textContent = new Date(note.updatedAt).toLocaleString();
+      date.textContent =
+        new Date(note.updatedAt).toLocaleString();
     }
 
     const deleteButton = document.createElement("button");
@@ -649,7 +1038,9 @@ function renderKeepNotes() {
     deleteButton.addEventListener("click", event => {
       event.stopPropagation();
 
-      keepNotes = keepNotes.filter(item => item.id !== note.id);
+      keepNotes = keepNotes.filter(
+        item => item.id !== note.id
+      );
 
       if (editingKeepId === note.id) {
         clearKeepComposer();
@@ -661,7 +1052,6 @@ function renderKeepNotes() {
 
     footer.appendChild(date);
     footer.appendChild(deleteButton);
-
     card.appendChild(footer);
 
     card.addEventListener("click", () => {
@@ -692,7 +1082,9 @@ saveKeepNoteButton.addEventListener("click", () => {
   const now = new Date().toISOString();
 
   if (editingKeepId) {
-    const note = keepNotes.find(item => item.id === editingKeepId);
+    const note = keepNotes.find(
+      item => item.id === editingKeepId
+    );
 
     if (note) {
       note.title = title;
@@ -714,11 +1106,16 @@ saveKeepNoteButton.addEventListener("click", () => {
   renderKeepNotes();
 });
 
-cancelKeepEditButton.addEventListener("click", clearKeepComposer);
+cancelKeepEditButton.addEventListener(
+  "click",
+  clearKeepComposer
+);
 
-// Ctrl+Enter saves a Keep note.
 keepBodyInput.addEventListener("keydown", event => {
-  if ((event.ctrlKey || event.metaKey) && event.key === "Enter") {
+  if (
+    (event.ctrlKey || event.metaKey) &&
+    event.key === "Enter"
+  ) {
     event.preventDefault();
     saveKeepNoteButton.click();
   }
@@ -729,7 +1126,8 @@ keepBodyInput.addEventListener("keydown", event => {
 // ============================================================
 
 copyBackupButton.addEventListener("click", async () => {
-  const encoded = localStorage.getItem(KEEP_STORAGE_KEY) || "";
+  const encoded =
+    localStorage.getItem(KEEP_STORAGE_KEY) || "";
 
   if (!encoded) {
     keepStatus.textContent = "No notes yet";
@@ -743,7 +1141,6 @@ copyBackupButton.addEventListener("click", async () => {
     keepStatus.textContent = "Base64 copied ✓";
     keepStatus.className = "status saved";
   } catch {
-    // Fallback for clipboard restrictions.
     window.prompt(
       "Copy this Base64 backup:",
       encoded
@@ -751,32 +1148,161 @@ copyBackupButton.addEventListener("click", async () => {
   }
 });
 
+
+
+document.addEventListener("mousedown", event => {
+  if (activeIndex === null) return;
+
+  const activeCell = documentEl.querySelector(
+    `[data-index="${activeIndex}"]`
+  );
+
+  if (!activeCell) return;
+
+  const clickedInsideActiveCell = activeCell.contains(event.target);
+  const clickedToolbar =
+    event.target.closest("#selectionToolbar") ||
+    event.target.closest(".cell-tools");
+
+  if (!clickedInsideActiveCell && !clickedToolbar) {
+    commitActiveCell();
+  }
+}, true);
+
+document.addEventListener("mouseup", () => {
+  if (!dragSelecting) return;
+
+  dragSelecting = false;
+  dragAnchorIndex = null;
+  dragLastIndex = null;
+
+  document.body.classList.remove("cell-drag-selecting");
+});
+
+
+selectionDeleteButton.addEventListener("click", event => {
+  event.stopPropagation();
+
+  if (multiSelected.size > 0) {
+    deleteCells([...multiSelected]);
+  }
+});
+
+selectionRedButton.addEventListener("click", event => {
+  event.stopPropagation();
+
+  if (multiSelected.size === 0) return;
+
+  const indices = [...multiSelected].sort((a, b) => a - b);
+
+  // If ALL selected cells are already red, this removes red from all.
+  // Otherwise it applies red to all selected cells.
+  const allRed = indices.every(index => isCellRed(blocks[index]));
+
+  indices.forEach(index => {
+    const source = unwrapRedSource(blocks[index].source).trim();
+
+    blocks[index].source = allRed
+      ? source
+      : `<span class="red-highlight">${source}</span>`;
+  });
+
+  renderAllBlocks();
+
+  // restore the same selected range after rerender
+  multiSelected = new Set(indices);
+  paintSelection();
+  queueAutosave();
+});
+
 // ============================================================
-// GLOBAL SHORTCUTS / INIT
+// GLOBAL KEYBOARD SHORTCUTS
 // ============================================================
+
+function isTypingTarget(target) {
+  return (
+    target instanceof HTMLInputElement ||
+    target instanceof HTMLTextAreaElement ||
+    target.isContentEditable
+  );
+}
 
 document.addEventListener("keydown", event => {
-  const markdownVisible = !markdownView.classList.contains("hidden");
+  const typing = isTypingTarget(event.target);
 
   if (
-    markdownVisible &&
+    isMarkdownVisible() &&
     (event.ctrlKey || event.metaKey) &&
     event.key.toLowerCase() === "s"
   ) {
     event.preventDefault();
     saveMarkdownFile();
+    return;
   }
 
   if (
-    markdownVisible &&
+    isMarkdownVisible() &&
     activeIndex === null &&
     (event.ctrlKey || event.metaKey) &&
     event.key.toLowerCase() === "o"
   ) {
     event.preventDefault();
     openMarkdownFile();
+    return;
+  }
+
+  if (
+    isMarkdownVisible() &&
+    !typing &&
+    (event.key === "Delete" || event.key === "Backspace") &&
+    multiSelected.size > 0
+  ) {
+    event.preventDefault();
+    deleteCells([...multiSelected]);
+    return;
+  }
+
+  if (typing) return;
+
+  if (isMarkdownVisible()) {
+    if (event.key === "Escape" && multiSelected.size > 0) {
+      event.preventDefault();
+      clearMultiSelection();
+      return;
+    }
+
+    if (event.key === "Tab") {
+      event.preventDefault();
+      moveSelection(event.shiftKey ? -1 : 1);
+      return;
+    }
+
+    if (event.key.toLowerCase() === "b") {
+      event.preventDefault();
+      appendBlock();
+      return;
+    }
+
+    if (event.key.toLowerCase() === "i") {
+      event.preventDefault();
+      enterEditMode(selectedIndex);
+      return;
+    }
+  }
+
+  if (
+    isKeepVisible() &&
+    keepUnlockedState &&
+    event.key.toLowerCase() === "b"
+  ) {
+    event.preventDefault();
+    focusNewKeepNote();
   }
 });
+
+// ============================================================
+// INIT
+// ============================================================
 
 if (!("showOpenFilePicker" in window)) {
   unsupported.classList.remove("hidden");
