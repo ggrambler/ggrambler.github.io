@@ -1,314 +1,179 @@
+
 [
   {
     "id": "001",
-    "title": "squabble up",
-    "artist": "Kendrick Lamar",
-    "album": "GNX",
-    "file": "02. squabble up.mp3",
+    "title": "sss (1)",
+    "artist": "sss",
+    "album": "sss",
+    "file": "sss (1).opus",
     "cover": ""
   },
   {
     "id": "002",
-    "title": "Dracula",
-    "artist": "",
-    "album": "",
-    "file": "03 - Dracula.flac",
+    "title": "sss (2)",
+    "artist": "sss",
+    "album": "sss",
+    "file": "sss (2).opus",
     "cover": ""
   },
   {
     "id": "003",
-    "title": "Pink + White",
-    "artist": "Frank Ocean",
-    "album": "Blonde",
-    "file": "03 Pink + White.mp3",
+    "title": "sss (03)",
+    "artist": "sss",
+    "album": "sss",
+    "file": "sss (3).opus",
     "cover": ""
   },
   {
     "id": "004",
-    "title": "luther",
-    "artist": "Kendrick Lamar",
-    "album": "GNX",
-    "file": "03. luther.mp3",
+    "title": "sss (04)",
+    "artist": "sss",
+    "album": "sss",
+    "file": "sss (4).opus",
     "cover": ""
   },
   {
     "id": "005",
-    "title": "Sometimes...",
-    "artist": "Tyler, The Creator",
-    "album": "Flower Boy",
-    "file": "03. Sometimes....flac",
+    "title": "sss (05)",
+    "artist": "sss",
+    "album": "sss",
+    "file": "sss (5).opus",
     "cover": ""
   },
   {
     "id": "006",
-    "title": "EXACTLY WHAT YOU RUN FROM YOU END UP CHASING",
-    "artist": "Tyler, The Creator",
-    "album": "IGOR",
-    "file": "04 - EXACTLY WHAT YOU RUN FROM YOU END UP CHASING.flac",
+    "title": "sss (06)",
+    "artist": "sss",
+    "album": "sss",
+    "file": "sss (6).opus",
     "cover": ""
   },
   {
     "id": "007",
-    "title": "Be Yourself",
-    "artist": "Frank Ocean",
-    "album": "Blonde",
-    "file": "04 Be Yourself.mp3",
+    "title": "sss (07)",
+    "artist": "sss",
+    "album": "sss",
+    "file": "sss (7).opus",
     "cover": ""
   },
   {
     "id": "008",
-    "title": "man at the garden",
-    "artist": "Kendrick Lamar",
-    "album": "GNX",
-    "file": "04. man at the garden.mp3",
+    "title": "sss (08)",
+    "artist": "sss",
+    "album": "sss",
+    "file": "sss (8).opus",
     "cover": ""
   },
   {
     "id": "009",
-    "title": "hey now",
-    "artist": "Kendrick Lamar",
-    "album": "GNX",
-    "file": "05. hey now.mp3",
+    "title": "sss (09)",
+    "artist": "sss",
+    "album": "sss",
+    "file": "sss (9).opus",
     "cover": ""
   },
   {
     "id": "010",
-    "title": "Skyline To",
-    "artist": "Frank Ocean",
-    "album": "Blonde",
-    "file": "06 Skyline To.mp3",
+    "title": "sss (10)",
+    "artist": "sss",
+    "album": "sss",
+    "file": "sss (10).opus",
     "cover": ""
   },
   {
     "id": "011",
-    "title": "Self Control",
-    "artist": "Frank Ocean",
-    "album": "Blonde",
-    "file": "07 Self Control.mp3",
+    "title": "sss (11)",
+    "artist": "sss",
+    "album": "sss",
+    "file": "sss (11).opus",
     "cover": ""
   },
   {
     "id": "012",
-    "title": "tv off",
-    "artist": "Kendrick Lamar",
-    "album": "GNX",
-    "file": "07. tv off.mp3",
+    "title": "sss (12)",
+    "artist": "sss",
+    "album": "sss",
+    "file": "sss (12).opus",
     "cover": ""
   },
   {
     "id": "013",
-    "title": "Good Guy",
-    "artist": "Frank Ocean",
-    "album": "Blonde",
-    "file": "08 Good Guy.mp3",
+    "title": "sss (13)",
+    "artist": "sss",
+    "album": "sss",
+    "file": "sss (13).opus",
     "cover": ""
   },
   {
     "id": "014",
-    "title": "dodger blue",
-    "artist": "Kendrick Lamar",
-    "album": "GNX",
-    "file": "08. dodger blue.mp3",
+    "title": "sss (14)",
+    "artist": "sss",
+    "album": "sss",
+    "file": "sss (14).opus",
     "cover": ""
   },
   {
     "id": "015",
-    "title": "Reminiscing",
-    "artist": "",
-    "album": "",
-    "file": "09 - Reminiscing.mp3",
+    "title": "sss (15)",
+    "artist": "sss",
+    "album": "sss",
+    "file": "sss (15).opus",
     "cover": ""
   },
   {
     "id": "016",
-    "title": "peekaboo",
-    "artist": "Kendrick Lamar",
-    "album": "GNX",
-    "file": "09. peekaboo.mp3",
+    "title": "sss (16)",
+    "artist": "sss",
+    "album": "sss",
+    "file": "sss (16).opus",
     "cover": ""
   },
   {
     "id": "017",
-    "title": "Self Aware",
-    "artist": "Temper City",
-    "album": "",
-    "file": "1. Temper City - Self Aware.flac",
+    "title": "sss (17)",
+    "artist": "sss",
+    "album": "sss",
+    "file": "sss (17).opus",
     "cover": ""
   },
   {
     "id": "018",
-    "title": "Solo (Reprise)",
-    "artist": "Frank Ocean",
-    "album": "Blonde",
-    "file": "10 Solo (Reprise).mp3",
+    "title": "sss (18)",
+    "artist": "sss",
+    "album": "sss",
+    "file": "sss (18).opus",
     "cover": ""
   },
   {
     "id": "019",
-    "title": "heart pt. 6",
-    "artist": "Kendrick Lamar",
-    "album": "GNX",
-    "file": "10. heart pt. 6.mp3",
+    "title": "sss (19)",
+    "artist": "sss",
+    "album": "sss",
+    "file": "sss (19).opus",
     "cover": ""
   },
   {
     "id": "020",
-    "title": "Pretty Sweet",
-    "artist": "Frank Ocean",
-    "album": "Blonde",
-    "file": "11 Pretty Sweet.mp3",
+    "title": "sss (20)",
+    "artist": "sss",
+    "album": "sss",
+    "file": "sss (20).opus",
     "cover": ""
   },
   {
     "id": "021",
-    "title": "Droppin' Seeds",
-    "artist": "Tyler, The Creator",
-    "album": "Flower Boy",
-    "file": "11. Droppin' Seeds.flac",
+    "title": "sss (21)",
+    "artist": "sss",
+    "album": "sss",
+    "file": "sss (21).opus",
     "cover": ""
   },
   {
     "id": "022",
-    "title": "gnx",
-    "artist": "Kendrick Lamar",
-    "album": "GNX",
-    "file": "11. gnx.mp3",
-    "cover": ""
-  },
-  {
-    "id": "023",
-    "title": "Facebook Story",
-    "artist": "Frank Ocean",
-    "album": "Blonde",
-    "file": "12 Facebook Story.mp3",
-    "cover": ""
-  },
-  {
-    "id": "024",
-    "title": "gloria",
-    "artist": "Kendrick Lamar",
-    "album": "GNX",
-    "file": "12. gloria.mp3",
-    "cover": ""
-  },
-  {
-    "id": "025",
-    "title": "Close to You",
-    "artist": "Frank Ocean",
-    "album": "Blonde",
-    "file": "13 Close to You.mp3",
-    "cover": ""
-  },
-  {
-    "id": "026",
-    "title": "White Ferrari",
-    "artist": "Frank Ocean",
-    "album": "Blonde",
-    "file": "14 White Ferrari.mp3",
-    "cover": ""
-  },
-  {
-    "id": "027",
-    "title": "Godspeed",
-    "artist": "Frank Ocean",
-    "album": "Blonde",
-    "file": "16 Godspeed.mp3",
-    "cover": ""
-  },
-  {
-    "id": "028",
-    "title": "Futura Free",
-    "artist": "Frank Ocean",
-    "album": "Blonde",
-    "file": "17 Futura Free.mp3",
-    "cover": ""
-  },
-  {
-    "id": "029",
-    "title": "A hopeless romantic playlist",
-    "artist": "",
-    "album": "",
-    "file": "A hopeless romantic playlist-converted.mp3",
-    "cover": ""
-  },
-  {
-    "id": "030",
-    "title": "After Hours Moody R&B Mix",
-    "artist": "Daniel Caesar, Summer Walker, Victoria Monét & SZA",
-    "album": "",
-    "file": "After Hours Moody R&B Mix - Daniel Caeser, Summer Walker, Victoria Monet & SZA - JOSE-converted.mp3",
-    "cover": ""
-  },
-  {
-    "id": "031",
-    "title": "BOYFRIEND",
-    "artist": "Karan Aujla, Sunanda Sharma, Ikky",
-    "album": "",
-    "file": "BOYFRIEND(MUSIC VIDEO) KARAN AUJLA- SUNANDA - IKKY - Latest Punjabi Songs 2025-converted.mp3",
-    "cover": ""
-  },
-  {
-    "id": "032",
-    "title": "Bring Back 2016 Vibes: A Playlist",
-    "artist": "",
-    "album": "",
-    "file": "Bring Back 2016 Vibes- A Playlist-converted.mp3",
-    "cover": ""
-  },
-  {
-    "id": "033",
-    "title": "On Top",
-    "artist": "Karan Aujla",
-    "album": "",
-    "file": "On Top (Full Video) Karan Aujla - Yeah Proof - New Punjabi Songs 2022-converted.mp3",
-    "cover": ""
-  },
-  {
-    "id": "034",
-    "title": "Balenci",
-    "artist": "Shubh",
-    "album": "",
-    "file": "Shubh - Balenci (Official Music Video)-converted.mp3",
-    "cover": ""
-  },
-  {
-    "id": "035",
-    "title": "SIFAR SAFAR",
-    "artist": "Karan Aujla",
-    "album": "",
-    "file": "SIFAR SAFAR (Music Video) KARAN AUJLA  -  LATEST PUNJABI SONGS 2024-converted.mp3",
-    "cover": ""
-  },
-  {
-    "id": "036",
-    "title": "SOFTLY",
-    "artist": "Karan Aujla, Ikky",
-    "album": "",
-    "file": "SOFTLY (Official Music Video) KARAN AUJLA - IKKY - LATEST PUNJABI SONGS 2023-converted.mp3",
-    "cover": ""
-  },
-  {
-    "id": "037",
-    "title": "WAVY",
-    "artist": "Karan Aujla",
-    "album": "",
-    "file": "WAVY (OFFICIAL VIDEO) KARAN AUJLA - LATEST PUNJABI SONGS 2024-converted.mp3",
-    "cover": ""
-  },
-  {
-    "id": "038",
-    "title": "Winning Speech",
-    "artist": "Karan Aujla",
-    "album": "",
-    "file": "Winning Speech (Music Video) Karan Aujla - Mxrci - Latest Punjabi Songs 2024-converted.mp3",
-    "cover": ""
-  },
-  {
-    "id": "039",
-    "title": "Tokyo Lo-fi Hiphop — Chill Beats for Study & Relax",
-    "artist": "",
-    "album": "",
-    "file": "𝐏𝐥𝐚𝐲𝐥𝐢𝐬𝐭 Tokyo Lo-fi Hiphop ☕️ Chill Beats for Study & Relax-converted.mp3",
+    "title": "sss (22)",
+    "artist": "sss",
+    "album": "sss",
+    "file": "sss (22).opus",
     "cover": ""
   }
 ]
